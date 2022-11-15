@@ -1,0 +1,34 @@
+from keras.preprocessing.image import ImageDataGenerator
+import cv2
+from os import listdir
+import time    
+def data_augmentor(file_dir, n_generated_samples, save_to_dir):
+    data_gen = ImageDataGenerator(rotation_range=30, 
+                                  width_shift_range=0.1,
+                                  height_shift_range=0.15, 
+                                  shear_range=0.25, 
+                                  zoom_range = 0.2,
+                                  horizontal_flip=True, 
+                                  vertical_flip=False, 
+                                  fill_mode='nearest',
+                                  brightness_range=(0.5,1.2)
+                                 )
+    for filename in listdir(file_dir):
+        image = cv2.imread(file_dir + '/' + filename)
+        image = cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
+        image = image.reshape((1,)+image.shape)
+        save_prefix = 'aug_' + filename[:-4]    
+        i=0
+        for batch in data_gen.flow(x=image, batch_size=1, save_to_dir=save_to_dir,
+                                   save_prefix=save_prefix, save_format='jpg'):
+            i += 1
+            if i > n_generated_samples:
+                break
+
+augmented_data_path  = 'D:\IBM\Digital Naturalist Dataset\Augmented Dataset'
+data_augmentor(file_dir='D:\IBM\Digital Naturalist Dataset\Bird\Great Indian Bustard Bird', n_generated_samples=20, save_to_dir=augmented_data_path+'\Birds\GIB_AUG'),
+data_augmentor(file_dir='D:\IBM\Digital Naturalist Dataset\Bird\Spoon Billed Sandpiper Bird', n_generated_samples=20, save_to_dir= augmented_data_path+'\Birds\SPS_AUG'),
+data_augmentor(file_dir='D:\IBM\Digital Naturalist Dataset\Flower\Corpse Flower', n_generated_samples=20, save_to_dir=augmented_data_path+'\Flowers\Corpse_AUG'),
+data_augmentor(file_dir='D:\IBM\Digital Naturalist Dataset\Flower\Lady Slipper Orchid Flower', n_generated_samples=20, save_to_dir=augmented_data_path+'\Flowers\LS_Orchid_AUG'),
+data_augmentor(file_dir='D:\IBM\Digital Naturalist Dataset\Mammal\Pangolin Mammal', n_generated_samples=20, save_to_dir=augmented_data_path+'\Mammals\LS_Pangolin_AUG'),
+data_augmentor(file_dir='D:\IBM\Digital Naturalist Dataset\Mammal\Senenca White Deer Mammal', n_generated_samples=20, save_to_dir=augmented_data_path+'\Mammals\SW_Deer_AUG')
